@@ -58,6 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         else
         {
             // 업데이트와 렌더링하는 파트
+            g_GameEdu01.Update();
             g_GameEdu01.Render();
         }
     }
