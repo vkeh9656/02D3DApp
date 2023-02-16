@@ -21,56 +21,6 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-//
-//VOID Render()
-//{
-//    if (NULL == g_pd3dDevice)
-//        return;
-//
-//    // Clear the backbuffer to a blue color
-//    g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
-//
-//    // Begin the scene
-//    if (SUCCEEDED(g_pd3dDevice->BeginScene()))
-//    {
-//        // Rendering of scene objects can happen here
-//        
-//
-//
-//        // End the scene
-//        g_pd3dDevice->EndScene();
-//    }
-//
-//    // Present the backbuffer contents to the display
-//    g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
-//}
-//
-//HRESULT InitD3D(HWND hWnd)
-//{
-//    if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION))) return E_FAIL;
-//
-//    D3DPRESENT_PARAMETERS d3dpp;
-//    ZeroMemory(&d3dpp, sizeof(d3dpp));
-//    d3dpp.Windowed = TRUE;
-//    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-//    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-//
-//    if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-//        &d3dpp, &g_pd3dDevice)))
-//    {
-//        return E_FAIL;
-//    }
-//
-//    return S_OK;
-//}
-//
-//VOID Cleanup()
-//{
-//    if (g_pd3dDevice != NULL)
-//        g_pd3dDevice->Release();
-//    if (g_pD3D != NULL)
-//        g_pD3D->Release();
-//}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
