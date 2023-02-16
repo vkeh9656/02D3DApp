@@ -21,8 +21,9 @@ HRESULT CD3DApp::InitD3D(HWND hWnd)
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
 
-	if (FAILED(m_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-		&d3dpp, &m_pd3dDevice)))
+	if (FAILED(m_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, 
+									D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+									&d3dpp, &m_pd3dDevice)))
 	{
 		return E_FAIL;
 	}

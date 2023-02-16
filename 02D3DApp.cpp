@@ -3,7 +3,6 @@
 
 #include "framework.h"
 #include "02D3DApp.h"
-#include <d3d9.h>
 #include "CGameEdu01.h"
 
 #define MAX_LOADSTRING 100
@@ -14,8 +13,6 @@ WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 HWND g_hWnd;
 
-LPDIRECT3D9         g_pD3D = NULL;
-LPDIRECT3DDEVICE9   g_pd3dDevice = NULL;
 CGameEdu01          g_GameEdu01;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
@@ -24,56 +21,56 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-
-VOID Render()
-{
-    if (NULL == g_pd3dDevice)
-        return;
-
-    // Clear the backbuffer to a blue color
-    g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
-
-    // Begin the scene
-    if (SUCCEEDED(g_pd3dDevice->BeginScene()))
-    {
-        // Rendering of scene objects can happen here
-
-
-
-        // End the scene
-        g_pd3dDevice->EndScene();
-    }
-
-    // Present the backbuffer contents to the display
-    g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
-}
-
-HRESULT InitD3D(HWND hWnd)
-{
-    if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION))) return E_FAIL;
-
-    D3DPRESENT_PARAMETERS d3dpp;
-    ZeroMemory(&d3dpp, sizeof(d3dpp));
-    d3dpp.Windowed = TRUE;
-    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-
-    if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-        &d3dpp, &g_pd3dDevice)))
-    {
-        return E_FAIL;
-    }
-
-    return S_OK;
-}
-
-VOID Cleanup()
-{
-    if (g_pd3dDevice != NULL)
-        g_pd3dDevice->Release();
-    if (g_pD3D != NULL)
-        g_pD3D->Release();
-}
+//
+//VOID Render()
+//{
+//    if (NULL == g_pd3dDevice)
+//        return;
+//
+//    // Clear the backbuffer to a blue color
+//    g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
+//
+//    // Begin the scene
+//    if (SUCCEEDED(g_pd3dDevice->BeginScene()))
+//    {
+//        // Rendering of scene objects can happen here
+//        
+//
+//
+//        // End the scene
+//        g_pd3dDevice->EndScene();
+//    }
+//
+//    // Present the backbuffer contents to the display
+//    g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
+//}
+//
+//HRESULT InitD3D(HWND hWnd)
+//{
+//    if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION))) return E_FAIL;
+//
+//    D3DPRESENT_PARAMETERS d3dpp;
+//    ZeroMemory(&d3dpp, sizeof(d3dpp));
+//    d3dpp.Windowed = TRUE;
+//    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+//    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+//
+//    if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+//        &d3dpp, &g_pd3dDevice)))
+//    {
+//        return E_FAIL;
+//    }
+//
+//    return S_OK;
+//}
+//
+//VOID Cleanup()
+//{
+//    if (g_pd3dDevice != NULL)
+//        g_pd3dDevice->Release();
+//    if (g_pD3D != NULL)
+//        g_pD3D->Release();
+//}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -89,15 +86,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_MY02D3DAPP, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
-
+    MSG msg;
     // 애플리케이션 초기화를 수행합니다:
     if (!InitInstance (hInstance, nCmdShow))
     {
         return FALSE;
     }
-    MSG msg;
-    InitD3D(g_hWnd);
     
+    /*InitD3D(g_hWnd);*/
+    g_GameEdu01.InitD3D(g_hWnd);
     // 기본 메시지 루프입니다:
     while (true)
     {
@@ -111,7 +108,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         else
         {
             // 업데이트와 렌더링하는 파트
-            Render();
+            g_GameEdu01.Render();
         }
     }
 
@@ -208,10 +205,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
     case WM_PAINT:
-        Render();
+        g_GameEdu01.Render();
         break;
     case WM_DESTROY:
-        Cleanup();
+        g_GameEdu01.Cleanup();
         PostQuitMessage(0); // WM_QUIT 메시지 발생
         break;
     default:
