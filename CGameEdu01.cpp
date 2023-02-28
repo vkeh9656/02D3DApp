@@ -43,12 +43,14 @@ void CGameEdu01::OnInit()
 	m_pd3dDevice->SetViewport(&vp);
 
 	m_Axis.OnInit(m_pd3dDevice);
+	m_Cube.OnInit(m_pd3dDevice);
 
 }
 
 void CGameEdu01::OnRender()
 {
 	m_Axis.OnRender();
+	m_Cube.OnRender();
 }
 
 void CGameEdu01::OnUpdate()
@@ -58,5 +60,6 @@ void CGameEdu01::OnUpdate()
 void CGameEdu01::OnRelease()
 {
 	m_Axis.OnRelease();
+	m_Cube.OnRelease();
 }
 

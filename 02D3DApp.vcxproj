@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="02D3DApp.h" />
     <ClInclude Include="CAxis.h" />
+    <ClInclude Include="CCube.h" />
     <ClInclude Include="CD3DApp.h" />
     <ClInclude Include="CGameEdu01.h" />
     <ClInclude Include="framework.h" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="02D3DApp.cpp" />
     <ClCompile Include="CAxis.cpp" />
+    <ClCompile Include="CCube.cpp" />
     <ClCompile Include="CD3DApp.cpp" />
     <ClCompile Include="CGameEdu01.cpp" />
   </ItemGroup>
