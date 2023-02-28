@@ -138,18 +138,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="02D3DApp.h" />
+    <ClInclude Include="CAxis.h" />
     <ClInclude Include="CD3DApp.h" />
     <ClInclude Include="CGameEdu01.h" />
-    <ClInclude Include="CTriangle.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="02D3DApp.cpp" />
+    <ClCompile Include="CAxis.cpp" />
     <ClCompile Include="CD3DApp.cpp" />
     <ClCompile Include="CGameEdu01.cpp" />
-    <ClCompile Include="CTriangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="02D3DApp.rc" />
