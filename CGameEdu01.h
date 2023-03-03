@@ -1,8 +1,9 @@
 #pragma once
 #include "CD3DApp.h"
 #include <d3dx9math.h>
+#include <D3dx9shape.h>
 #include "CAxis.h"
-#include "CCube.h"
+
 
 class CGameEdu01 : public CD3DApp
 {
@@ -19,12 +20,13 @@ private:
 	D3DXMATRIX m_matProj;
 	D3DXVECTOR3 m_Eye, m_At, m_Up;
 	CAxis m_Axis;
-	/*CCube m_Cube;*/
 
-	LPD3DXMESH m_pBoxMesh;
-	LPD3DXMESH m_pSphereMesh;
+	float m_fScale;
 	LPD3DXMESH m_pTeapotMesh;
-	LPD3DXMESH m_pCylinderMesh;
+
+	/*LPD3DXMESH m_pBoxMesh;
+	LPD3DXMESH m_pSphereMesh;*/
+	/*LPD3DXMESH m_pCylinderMesh;*/
 	
 
 public:

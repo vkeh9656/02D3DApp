@@ -48,11 +48,11 @@ void CAxis::OnRender()
 {
 	D3DXMATRIX matWorld;
 	D3DXMatrixIdentity(&matWorld);
-
+	m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 	m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE); // 라이트가 기본적으론 켜져있음.
+
 	m_pd3dDevice->SetStreamSource(0, m_pVB, 0, sizeof(CUSTOMVERTEX));
 	m_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-	m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 	m_pd3dDevice->DrawPrimitive(D3DPT_LINELIST, 0, 3);
 	m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
