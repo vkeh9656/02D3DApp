@@ -19,11 +19,15 @@ private:
 	D3DXMATRIX m_matProj;
 	D3DXVECTOR3 m_Eye, m_At, m_Up;
 	CAxis m_Axis;
-	CCube m_Cube;
+	/*CCube m_Cube;*/
+
+	LPD3DXMESH m_pBoxMesh;
+	LPD3DXMESH m_pSphereMesh;
+	LPD3DXMESH m_pTeapotMesh;
+	LPD3DXMESH m_pCylinderMesh;
 	
 
 public:
 	CGameEdu01(void);
 	~CGameEdu01(void);
 };
-
