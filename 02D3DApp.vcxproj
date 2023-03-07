@@ -142,6 +142,7 @@
     <ClInclude Include="CCube.h" />
     <ClInclude Include="CD3DApp.h" />
     <ClInclude Include="CGameEdu01.h" />
+    <ClInclude Include="CGround.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="CCube.cpp" />
     <ClCompile Include="CD3DApp.cpp" />
     <ClCompile Include="CGameEdu01.cpp" />
+    <ClCompile Include="CGround.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="02D3DApp.rc" />
