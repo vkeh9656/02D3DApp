@@ -30,6 +30,12 @@ private:
 	/*LPD3DXMESH m_pCylinderMesh;*/
 	
 
+	// ÆùÆ®
+	LPD3DXFONT m_pFont;
+
+	DWORD m_dwElapsedTime;
+	unsigned int m_nFPS, m_nFPSCount;
+
 public:
 	CGameEdu01(void);
 	~CGameEdu01(void);

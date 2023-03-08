@@ -1,4 +1,5 @@
 #include "CGameEdu01.h"
+#include "stdio.h"
 
 CGameEdu01::CGameEdu01(void)
 {
@@ -23,9 +24,9 @@ void CGameEdu01::OnInit()
 	vp.MinZ = 0.0f;
 	vp.MaxZ = 1.0f;
 
-	m_Eye.x = 10.0f; // 0
+	m_Eye.x = 0.0f; // 0
 	m_Eye.y = 10.0f; // 0
-	m_Eye.z = -15.0f;// -8
+	m_Eye.z = -32.0f;// -8
 
 	m_At.x = 0.0f;
 	m_At.y = 0.0f;
@@ -49,6 +50,10 @@ void CGameEdu01::OnInit()
 	//D3DXCreateSphere(m_pd3dDevice, 3.0f, 30, 10, &m_pSphereMesh, NULL);
 	m_Ground.Create(m_pd3dDevice, 200, 100, 0.5);
 	m_fScale = 1.0f;
+
+	D3DXCreateFont(m_pd3dDevice, 20, 0, FW_NORMAL, 1, FALSE, DEFAULT_CHARSET, 
+		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, 
+		L"System", &m_pFont);
 }
 
 void CGameEdu01::OnRender()
@@ -143,15 +148,38 @@ void CGameEdu01::OnRender()
 	//m_pBoxMesh->DrawSubset(0);	
 	//pCylinderMesh->DrawSubset(0);
 	//m_pSphereMesh->DrawSubset(0);
+
+	char str[100];
+	RECT rt = { 10, 10, 0, 0 };
+	
+	sprintf(str, "FPS: %d", m_nFPS);
+	m_pFont->DrawTextA(NULL, str, -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+	m_nFPSCount++;
 }
 
 void CGameEdu01::OnUpdate()
 {
-	if (GetAsyncKeyState(VK_LEFT) < 0)
+	/*if (GetAsyncKeyState(VK_LEFT) < 0)
 		m_fScale += 0.1f;
 
 	if (GetAsyncKeyState(VK_RIGHT) < 0)
-		m_fScale -= 0.1f;
+		m_fScale -= 0.1f;*/
+
+	DWORD dwCurTime = GetTickCount64();
+	static DWORD dwOldTime = GetTickCount64();
+	static DWORD dwAccumulateTime = 0; // 누적 경과 시간
+	
+	m_dwElapsedTime = dwCurTime - dwOldTime; // 프레임 경과 시간
+	dwOldTime = dwCurTime;
+
+	dwAccumulateTime += m_dwElapsedTime; // 누적
+	if (dwAccumulateTime >= 1000) // 1초 경과  체크
+	{
+		dwAccumulateTime = 0;
+		m_nFPS = m_nFPSCount;
+		m_nFPSCount = 0;
+	}
+		 
 }
 
 void CGameEdu01::OnRelease()
@@ -164,5 +192,6 @@ void CGameEdu01::OnRelease()
 	//m_Axis.OnRelease();
 	m_Ground.OnRelease();
 	
+	m_pFont->Release();
 }
 

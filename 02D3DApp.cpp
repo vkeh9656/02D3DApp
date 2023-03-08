@@ -157,6 +157,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_PAINT:
         g_GameEdu01.Render();
+        g_GameEdu01.Update();
         break;
     case WM_DESTROY:
         g_GameEdu01.Cleanup();
