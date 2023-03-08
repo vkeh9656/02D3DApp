@@ -12,6 +12,12 @@ struct SPHERE_PROPERTY
 	float		fRadius;
 };
 
+struct BOX_PROPERTY
+{
+	D3DXVECTOR3 vTrans; // 중심점과 같은 역할(이동 벡터)
+	float		fScaling;
+	float		vMin, vMax;
+};
 
 class CGameEdu01 : public CD3DApp
 {
@@ -29,6 +35,7 @@ private:
 	D3DXVECTOR3 m_Eye, m_At, m_Up;
 	
 	SPHERE_PROPERTY m_Sphere[2];
+	
 	BOOL m_bIsCollision;
 	LPD3DXMESH m_pMesh;
 	

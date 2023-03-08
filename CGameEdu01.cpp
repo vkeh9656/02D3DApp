@@ -22,7 +22,6 @@ BOOL CheckSphereIntersect(D3DXVECTOR3 vCenter1, float fRadius1, D3DXVECTOR3 vCen
 	return FALSE; // ∫Ò√Êµπ
 }
 
-
 void CGameEdu01::OnInit()
 {
 	RECT rect;
