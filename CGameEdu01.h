@@ -5,6 +5,13 @@
 #include "CAxis.h"
 #include "CGround.h"
 
+struct SPHERE_PROPERTY
+{
+	D3DXVECTOR3 vTrans; // 중심점과 같은 역할(이동 벡터)
+	float		fScaling;
+	float		fRadius;
+};
+
 
 class CGameEdu01 : public CD3DApp
 {
@@ -20,10 +27,21 @@ private:
 	D3DXMATRIX m_matView;
 	D3DXMATRIX m_matProj;
 	D3DXVECTOR3 m_Eye, m_At, m_Up;
-	CAxis m_Axis;
-	CGround m_Ground;
-	float m_fScale;
-	LPD3DXMESH m_pTeapotMesh;
+	
+	SPHERE_PROPERTY m_Sphere[2];
+	BOOL m_bIsCollision;
+	LPD3DXMESH m_pMesh;
+	
+	LPD3DXFONT m_pFont;
+
+
+	/*CAxis m_Axis;
+	CGround m_Ground;*/
+
+
+
+	/*float m_fScale;
+	LPD3DXMESH m_pTeapotMesh;*/
 
 	/*LPD3DXMESH m_pBoxMesh;
 	LPD3DXMESH m_pSphereMesh;*/
@@ -31,10 +49,10 @@ private:
 	
 
 	// 폰트
-	LPD3DXFONT m_pFont;
-
 	DWORD m_dwElapsedTime;
-	unsigned int m_nFPS, m_nFPSCount;
+	/*LPD3DXFONT m_pFont;
+
+	unsigned int m_nFPS, m_nFPSCount;*/
 
 public:
 	CGameEdu01(void);

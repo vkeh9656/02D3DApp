@@ -9,6 +9,18 @@ CGameEdu01::~CGameEdu01(void)
 {
 }
 
+BOOL CheckSphereIntersect(D3DXVECTOR3 vCenter1, float fRadius1, D3DXVECTOR3 vCenter2, float fRadius2)
+{
+	float fDistance;
+	D3DXVECTOR3 vDiff;
+
+	vDiff = vCenter2 - vCenter1;
+	fDistance = D3DXVec3Length(&vDiff);
+
+	if (fDistance <= (fRadius1 + fRadius2))
+		return TRUE; // 충돌
+	return FALSE; // 비충돌
+}
 
 
 void CGameEdu01::OnInit()
@@ -25,8 +37,8 @@ void CGameEdu01::OnInit()
 	vp.MaxZ = 1.0f;
 
 	m_Eye.x = 0.0f; // 0
-	m_Eye.y = 10.0f; // 0
-	m_Eye.z = -32.0f;// -8
+	m_Eye.y = 5.0f; // 0
+	m_Eye.z = -30.0f;// 
 
 	m_At.x = 0.0f;
 	m_At.y = 0.0f;
@@ -48,12 +60,29 @@ void CGameEdu01::OnInit()
 	/*D3DXCreateTeapot(m_pd3dDevice, &m_pTeapotMesh, NULL);*/
 	//D3DXCreateCylinder(m_pd3dDevice, 2.0f, 2.0f, 5.0f, 100, 10, &m_pCylinderMesh, NULL);
 	//D3DXCreateSphere(m_pd3dDevice, 3.0f, 30, 10, &m_pSphereMesh, NULL);
-	m_Ground.Create(m_pd3dDevice, 200, 100, 0.5);
-	m_fScale = 1.0f;
+	//m_Ground.Create(m_pd3dDevice, 200, 100, 0.5);
+	//m_fScale = 1.0f;
 
-	D3DXCreateFont(m_pd3dDevice, 20, 0, FW_NORMAL, 1, FALSE, DEFAULT_CHARSET, 
+	D3DXCreateFont(m_pd3dDevice, 15, 0, FW_NORMAL, 1, FALSE, DEFAULT_CHARSET, 
 		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, 
 		L"System", &m_pFont);
+
+	D3DXCreateSphere(m_pd3dDevice, 1.0f, 20, 20, &m_pMesh, NULL);
+
+	m_Sphere[0].fRadius = 1.0f;
+	m_Sphere[0].fScaling = 1.0f;
+	m_Sphere[0].vTrans = D3DXVECTOR3(0, 0, 0);
+
+	m_Sphere[1].fRadius = 1.0f;
+	m_Sphere[1].fScaling = 2.0f;
+	m_Sphere[1].vTrans = D3DXVECTOR3(5, 0, 0);
+	
+	m_bIsCollision = FALSE;
+
+	m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+
+	
 }
 
 void CGameEdu01::OnRender()
@@ -90,7 +119,7 @@ void CGameEdu01::OnRender()
 	//m_Axis.OnRender();
 	//m_Cube.OnRender();
 
-	m_Ground.OnRender();
+	//m_Ground.OnRender();
 	
 	//m_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 	//m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
@@ -149,12 +178,37 @@ void CGameEdu01::OnRender()
 	//pCylinderMesh->DrawSubset(0);
 	//m_pSphereMesh->DrawSubset(0);
 
-	char str[100];
-	RECT rt = { 10, 10, 0, 0 };
+	//char str[100];
+	//RECT rt = { 10, 10, 0, 0 };
 	
-	sprintf(str, "FPS: %d", m_nFPS);
-	m_pFont->DrawTextA(NULL, str, -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
-	m_nFPSCount++;
+	//sprintf(str, "FPS: %d", m_nFPS);
+	//m_pFont->DrawTextA(NULL, str, -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+	//m_nFPSCount++;
+
+
+
+
+	char string[100];
+	RECT rt;
+	D3DXMATRIX matWorld, matScale, matTrans;
+
+	for (int i = 0; i < 2; i++)
+	{
+		D3DXMatrixTranslation(&matTrans, m_Sphere[i].vTrans.x, m_Sphere[i].vTrans.y, m_Sphere[i].vTrans.z);
+		D3DXMatrixScaling(&matScale, m_Sphere[i].fScaling, m_Sphere[i].fScaling, m_Sphere[i].fScaling);
+
+		matWorld = matScale * matTrans;
+		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
+		m_pMesh->DrawSubset(0);
+	}
+
+	SetRect(&rt, 10, 10, 0, 0);
+
+	if (m_bIsCollision)
+		m_pFont->DrawTextA(NULL, "충돌", -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+	else
+		m_pFont->DrawTextA(NULL, "비충돌", -1, &rt, DT_NOCLIP, D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
+	
 }
 
 void CGameEdu01::OnUpdate()
@@ -165,20 +219,52 @@ void CGameEdu01::OnUpdate()
 	if (GetAsyncKeyState(VK_RIGHT) < 0)
 		m_fScale -= 0.1f;*/
 
+
+
+	//DWORD dwCurTime = GetTickCount64();
+	//static DWORD dwOldTime = GetTickCount64();
+	//static DWORD dwAccumulateTime = 0; // 누적 경과 시간
+	//
+	//m_dwElapsedTime = dwCurTime - dwOldTime; // 프레임 경과 시간
+	//dwOldTime = dwCurTime;
+
+	//dwAccumulateTime += m_dwElapsedTime; // 누적
+	//if (dwAccumulateTime >= 1000) // 1초 경과  체크
+	//{
+	//	dwAccumulateTime = 0;
+	//	m_nFPS = m_nFPSCount;
+	//	m_nFPSCount = 0;
+	//}
+
 	DWORD dwCurTime = GetTickCount64();
 	static DWORD dwOldTime = GetTickCount64();
-	static DWORD dwAccumulateTime = 0; // 누적 경과 시간
-	
-	m_dwElapsedTime = dwCurTime - dwOldTime; // 프레임 경과 시간
+	m_dwElapsedTime = dwCurTime - dwOldTime;
 	dwOldTime = dwCurTime;
 
-	dwAccumulateTime += m_dwElapsedTime; // 누적
-	if (dwAccumulateTime >= 1000) // 1초 경과  체크
+	if (GetAsyncKeyState(VK_UP))
 	{
-		dwAccumulateTime = 0;
-		m_nFPS = m_nFPSCount;
-		m_nFPSCount = 0;
+		m_Sphere[0].vTrans.y += m_dwElapsedTime * 0.003f;
 	}
+
+	if (GetAsyncKeyState(VK_DOWN))
+	{
+		m_Sphere[0].vTrans.y -= m_dwElapsedTime * 0.003f;
+	}
+
+	if (GetAsyncKeyState(VK_LEFT))
+	{
+		m_Sphere[0].vTrans.x -= m_dwElapsedTime * 0.003f;
+	}
+
+	if (GetAsyncKeyState(VK_RIGHT))
+	{
+		m_Sphere[0].vTrans.x += m_dwElapsedTime * 0.003f;
+	}
+
+	m_bIsCollision = CheckSphereIntersect(m_Sphere[0].vTrans,
+		m_Sphere[0].fRadius * m_Sphere[0].fScaling,
+		m_Sphere[1].vTrans,
+		m_Sphere[1].fRadius * m_Sphere[1].fScaling);
 		 
 }
 
@@ -190,8 +276,9 @@ void CGameEdu01::OnRelease()
 	//m_pCylinderMesh->Release();
 	//m_pSphereMesh->Release();
 	//m_Axis.OnRelease();
-	m_Ground.OnRelease();
+	//m_Ground.OnRelease();
 	
+	m_pMesh->Release();
 	m_pFont->Release();
 }
 
