@@ -22,6 +22,16 @@ BOOL CheckSphereIntersect(D3DXVECTOR3 vCenter1, float fRadius1, D3DXVECTOR3 vCen
 	return FALSE; // 비충돌
 }
 
+BOOL CheckCubeIntersect(D3DXVECTOR3* vMin1, D3DXVECTOR3* vMax1, D3DXVECTOR3* vMin2, D3DXVECTOR3* vMax2)
+{
+	if (vMin1->x <= vMax2->x && vMax1->x >= vMin2->x &&
+		vMin1->y <= vMax2->y && vMax1->y >= vMin2->y &&
+		vMin1->z <= vMax2->z && vMax1->z >= vMin2->z)
+		return TRUE;
+	return FALSE;
+}
+
+
 void CGameEdu01::OnInit()
 {
 	RECT rect;
@@ -66,15 +76,46 @@ void CGameEdu01::OnInit()
 		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, 
 		L"System", &m_pFont);
 
-	D3DXCreateSphere(m_pd3dDevice, 1.0f, 20, 20, &m_pMesh, NULL);
+	D3DXCreateBox(m_pd3dDevice, 1.0f, 1.0f, 1.0f, &m_pMesh, NULL);
+	D3DXVECTOR3* pVertices;
+	
+	// VertexBuffer에 접근하기 위해선 우선 Lock을 걸어야됨!
+	m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVertices);
 
-	m_Sphere[0].fRadius = 1.0f;
+	// Vertex Buffer 뒤져서 최소값 최대값을 딱 추출해냄.
+	D3DXComputeBoundingBox(pVertices, m_pMesh->GetNumVertices(), m_pMesh->GetNumBytesPerVertex(), &m_vMin, &m_vMax);
+	m_pMesh->UnlockVertexBuffer();
+
+	D3DXMATRIX matScale, matTrans, matWorld;
+	m_Box[0].fScaling = 2.0f;
+	m_Box[0].vTrans = D3DXVECTOR3(5.0f, 0.0f, 0.0f);
+	D3DXMatrixTranslation(&matTrans, m_Box[0].vTrans.x, m_Box[0].vTrans.y, m_Box[0].vTrans.z);
+	D3DXMatrixScaling(&matScale, m_Box[0].fScaling, m_Box[0].fScaling, m_Box[0].fScaling);
+	matWorld = matScale * matTrans; // 실제로 나타내고자 하는 월드의 행렬
+	D3DXVec3TransformCoord(&m_Box[0].vMin, &m_vMin, &matWorld); // 그 행렬에서의 최초의 미니멈과 맥시멈 좌표를 구해냄
+	D3DXVec3TransformCoord(&m_Box[0].vMax, &m_vMax, &matWorld); // 그 행렬에서의 최초의 미니멈과 맥시멈 좌표를 구해냄
+
+
+	m_Box[1].fScaling = 1.0f;
+	m_Box[1].vTrans = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	D3DXMatrixTranslation(&matTrans, m_Box[1].vTrans.x, m_Box[1].vTrans.y, m_Box[1].vTrans.z);
+	D3DXMatrixScaling(&matScale, m_Box[1].fScaling, m_Box[1].fScaling, m_Box[1].fScaling);
+	matWorld = matScale * matTrans; // 실제로 나타내고자 하는 월드의 행렬
+	D3DXVec3TransformCoord(&m_Box[1].vMin, &m_vMin, &matWorld); // 그 행렬에서의 최초의 미니멈과 맥시멈 좌표를 구해냄
+	D3DXVec3TransformCoord(&m_Box[1].vMax, &m_vMax, &matWorld); // 그 행렬에서의 최초의 미니멈과 맥시멈 좌표를 구해냄
+
+
+
+	//D3DXCreateSphere(m_pd3dDevice, 1.0f, 20, 20, &m_pMesh, NULL);
+
+
+	/*m_Sphere[0].fRadius = 1.0f;
 	m_Sphere[0].fScaling = 1.0f;
 	m_Sphere[0].vTrans = D3DXVECTOR3(0, 0, 0);
 
 	m_Sphere[1].fRadius = 1.0f;
 	m_Sphere[1].fScaling = 2.0f;
-	m_Sphere[1].vTrans = D3DXVECTOR3(5, 0, 0);
+	m_Sphere[1].vTrans = D3DXVECTOR3(5, 0, 0);*/
 	
 	m_bIsCollision = FALSE;
 
@@ -193,8 +234,8 @@ void CGameEdu01::OnRender()
 
 	for (int i = 0; i < 2; i++)
 	{
-		D3DXMatrixTranslation(&matTrans, m_Sphere[i].vTrans.x, m_Sphere[i].vTrans.y, m_Sphere[i].vTrans.z);
-		D3DXMatrixScaling(&matScale, m_Sphere[i].fScaling, m_Sphere[i].fScaling, m_Sphere[i].fScaling);
+		D3DXMatrixTranslation(&matTrans, m_Box[i].vTrans.x, m_Box[i].vTrans.y, m_Box[i].vTrans.z);
+		D3DXMatrixScaling(&matScale, m_Box[i].fScaling, m_Box[i].fScaling, m_Box[i].fScaling);
 
 		matWorld = matScale * matTrans;
 		m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
@@ -242,28 +283,33 @@ void CGameEdu01::OnUpdate()
 
 	if (GetAsyncKeyState(VK_UP))
 	{
-		m_Sphere[0].vTrans.y += m_dwElapsedTime * 0.003f;
+		m_Box[0].vTrans.y += m_dwElapsedTime * 0.003f;
 	}
 
 	if (GetAsyncKeyState(VK_DOWN))
 	{
-		m_Sphere[0].vTrans.y -= m_dwElapsedTime * 0.003f;
+		m_Box[0].vTrans.y -= m_dwElapsedTime * 0.003f;
 	}
 
 	if (GetAsyncKeyState(VK_LEFT))
 	{
-		m_Sphere[0].vTrans.x -= m_dwElapsedTime * 0.003f;
+		m_Box[0].vTrans.x -= m_dwElapsedTime * 0.003f;
 	}
 
 	if (GetAsyncKeyState(VK_RIGHT))
 	{
-		m_Sphere[0].vTrans.x += m_dwElapsedTime * 0.003f;
+		m_Box[0].vTrans.x += m_dwElapsedTime * 0.003f;
 	}
+	
+	D3DXMATRIX matScale, matTrans, matWorld;
+	D3DXMatrixTranslation(&matTrans, m_Box[0].vTrans.x, m_Box[0].vTrans.y, m_Box[0].vTrans.z);
+	D3DXMatrixScaling(&matScale, m_Box[0].fScaling, m_Box[0].fScaling, m_Box[0].fScaling);
 
-	m_bIsCollision = CheckSphereIntersect(m_Sphere[0].vTrans,
-		m_Sphere[0].fRadius * m_Sphere[0].fScaling,
-		m_Sphere[1].vTrans,
-		m_Sphere[1].fRadius * m_Sphere[1].fScaling);
+	matWorld = matScale * matTrans;
+	D3DXVec3TransformCoord(&m_Box[0].vMin, &m_vMin, &matWorld);
+	D3DXVec3TransformCoord(&m_Box[0].vMax, &m_vMax, &matWorld);
+
+	m_bIsCollision = CheckCubeIntersect(&m_Box[0].vMin, &m_Box[0].vMax, &m_Box[1].vMin, &m_Box[1].vMax);
 		 
 }
 
