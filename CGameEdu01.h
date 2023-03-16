@@ -49,6 +49,24 @@ struct PLAYER
 	D3DXMATRIX matTranslation;	// 이동 행렬
 };
 
+struct  ENEMY_PROPERTY
+{
+	float fMoveVelocity;	
+	float fScale;
+	DWORD dwFireTime;		// 미사일 발사 시간 간격
+	D3DXMATRIX matScale;	// 크기
+};
+
+
+struct ENEMY
+{
+	int nLife;
+	DWORD dwAppearTime;
+	D3DXVECTOR3 vPos;
+	DWORD dwOldFireTime;
+	D3DXMATRIX matTranslation;
+};
+
 class CGameEdu01 : public CD3DApp
 {
 //private:
@@ -75,32 +93,28 @@ private:
 	CGround m_Ground;
 	LPD3DXMESH m_pTeapotMesh;
 	LPD3DXMESH m_pPlayerBulletMesh;
+	LPD3DXMESH m_pEnemyBoxMesh;
+	LPD3DXMESH m_pEnemyBulletMesh;
 
 	// 주인공
 	PLAYER m_sPlayer;
 	BULLET_PROPERTY m_sPlayerBulletProperty;
 	BULLET m_sPlayerBullet[10];
 	
+	// 적 캐릭터
+	ENEMY_PROPERTY m_EnemyProperty;
+	ENEMY m_Enemy[100];
+	BULLET_PROPERTY m_EnemyBulletProperty;
+	BULLET m_Enemybullet[100];
+	int m_nEnemyIndex;
 
-	// CAxis m_Axis;
-	
+	DWORD m_dwElapsedTime; // 프레임 경과 시간
 
+	// 스테이지 정보
+	DWORD m_dwGameStartTime;
+	DWORD m_dwGameElapsedTime;
 
-
-	// float m_fScale;
-	
-
-	/*LPD3DXMESH m_pBoxMesh;
-	LPD3DXMESH m_pSphereMesh;*/
-	/*LPD3DXMESH m_pCylinderMesh;*/
-	
-
-	// 폰트
-	 DWORD m_dwElapsedTime;
-	/*LPD3DXFONT m_pFont;
-
-	unsigned int m_nFPS, m_nFPSCount;*/
-
+	int m_nEnemyCount;
 public:
 	CGameEdu01(void);
 	~CGameEdu01(void);
