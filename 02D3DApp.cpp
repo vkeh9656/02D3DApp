@@ -44,7 +44,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
     
     /*InitD3D(g_hWnd);*/
-    g_GameEdu01.InitD3D(g_hWnd);
+    /*g_GameEdu01.InitD3D(g_hWnd);*/
     // 기본 메시지 루프입니다:
     while (true)
     {
@@ -117,7 +117,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
-
+   g_GameEdu01.InitD3D(g_hWnd);
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 

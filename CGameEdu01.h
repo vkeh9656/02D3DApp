@@ -31,6 +31,7 @@ struct BULLET_PROPERTY
 	float fBulletVelocity;		// 이동 속도
 	float fScale;				// 크기
 	D3DXMATRIX matScale;		// 크기 행렬
+	D3DXVECTOR3 vMin, vMax;		// 충돌 좌표
 };
 
 struct PLAYER
@@ -47,30 +48,37 @@ struct PLAYER
 	D3DXMATRIX matScale;		// 크기 행렬
 	D3DXMATRIX matRotationY;	// 회전 행렬
 	D3DXMATRIX matTranslation;	// 이동 행렬
+
+	// 주인공 충돌 좌표
+	D3DXVECTOR3 vMin, vMax;
+};
+
+struct ENEMY
+{
+	int nLife;				// 생명
+	DWORD dwAppearTime;		// 출현 시각
+	D3DXVECTOR3 vPos;
+
+	DWORD dwOldFireTime;	// 미사일 발사 이전 시간
+	D3DXMATRIX matTranslation;	// 이동 행렬
 };
 
 struct  ENEMY_PROPERTY
 {
-	float fMoveVelocity;	
-	float fScale;
+	float fMoveVelocity;	// 속력
+	float fScale;			// 크기
+
 	DWORD dwFireTime;		// 미사일 발사 시간 간격
 	D3DXMATRIX matScale;	// 크기
+	D3DXVECTOR3 vMin, vMax;
 };
 
 
-struct ENEMY
-{
-	int nLife;
-	DWORD dwAppearTime;
-	D3DXVECTOR3 vPos;
-	DWORD dwOldFireTime;
-	D3DXMATRIX matTranslation;
-};
 
 class CGameEdu01 : public CD3DApp
 {
 //private:
-	/*HWND m_hWnd;*/	// 아나 이 핸들때문에... 여기서 한번 더 선언해버리니까 부모클래스에 선언된 핸들을 못가져왔어..
+	/*HWND m_hWnd;*/	
 
 private:
 	virtual void OnInit();
@@ -82,31 +90,24 @@ private:
 	D3DXMATRIX m_matProj;
 	D3DXVECTOR3 m_Eye, m_At, m_Up;
 	
-	/*SPHERE_PROPERTY m_Sphere[2];*/
-	BOX_PROPERTY m_Box[2];
-	D3DXVECTOR3 m_vMin, m_vMax;
-	BOOL m_bIsCollision;
-	LPD3DXMESH m_pMesh;
-	
-	LPD3DXFONT m_pFont;
-
 	CGround m_Ground;
-	LPD3DXMESH m_pTeapotMesh;
-	LPD3DXMESH m_pPlayerBulletMesh;
-	LPD3DXMESH m_pEnemyBoxMesh;
-	LPD3DXMESH m_pEnemyBulletMesh;
+
+	LPD3DXMESH m_pTeapotMesh;		// 주인공
+	LPD3DXMESH m_pPlayerBulletMesh;	// 주인공 미사일 (원기둥)
+	LPD3DXMESH m_pEnemyBoxMesh;		// 적
+	LPD3DXMESH m_pEnemyBulletMesh;	// 적 미사일
 
 	// 주인공
 	PLAYER m_sPlayer;
-	BULLET_PROPERTY m_sPlayerBulletProperty;
-	BULLET m_sPlayerBullet[10];
+	BULLET_PROPERTY m_sPlayerBulletProperty;	// 주인공 미사일 전체 속성
+	BULLET m_sPlayerBullet[10];					// 주인공 미사일 개별 속성
 	
 	// 적 캐릭터
 	ENEMY_PROPERTY m_EnemyProperty;
-	ENEMY m_Enemy[100];
-	BULLET_PROPERTY m_EnemyBulletProperty;
-	BULLET m_Enemybullet[100];
-	int m_nEnemyIndex;
+	ENEMY m_Enemy[100];							// 적 캐릭터 100개
+	BULLET_PROPERTY m_EnemyBulletProperty;		// 적 캐릭터 미사일 전체 속성
+	BULLET m_EnemyBullet[100];					// 적 미사일, memory pool 기법으로 넉넉하게 확보
+	int m_nEnemyIndex;							// 적 캐릭터 출현 인덱스
 
 	DWORD m_dwElapsedTime; // 프레임 경과 시간
 
